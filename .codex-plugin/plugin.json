@@ -1,6 +1,6 @@
 {
   "name": "remote-connector",
-  "version": "0.1.0+codex.20260607103220",
+  "version": "0.1.0+codex.20260607125929",
   "description": "Prepare a remote SSH host for Codex desktop connections.",
   "author": {
     "name": "Local"

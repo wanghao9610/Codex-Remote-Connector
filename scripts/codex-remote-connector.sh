@@ -130,6 +130,34 @@ host_exists() {
   ' "$config"
 }
 
+remote_codex_installed() {
+  if [ "$DRY_RUN" -eq 1 ]; then
+    dry "ssh $REMOTE 'test -x \"\$HOME/.codex/bin/codex\"'"
+    return 1
+  fi
+
+  ssh "$REMOTE" 'test -x "$HOME/.codex/bin/codex"'
+}
+
+remote_codex_authenticated() {
+  if [ "$DRY_RUN" -eq 1 ]; then
+    dry "ssh $REMOTE 'test -s \"\$HOME/.codex/auth.json\"'"
+    return 1
+  fi
+
+  ssh "$REMOTE" 'test -s "$HOME/.codex/auth.json"'
+}
+
+tunnel_running() {
+  if [ "$DRY_RUN" -eq 1 ]; then
+    dry "pgrep -f 'ssh .* -R $REMOTE_BIND:$LOCAL_PROXY $REMOTE'"
+    return 1
+  fi
+
+  command -v pgrep >/dev/null 2>&1 || return 1
+  pgrep -f "ssh .* -R $REMOTE_BIND:$LOCAL_PROXY $REMOTE" >/dev/null 2>&1
+}
+
 REMOTE=""
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -226,37 +254,52 @@ if [ "$DRY_RUN" -eq 1 ]; then
 fi
 
 if [ "$SKIP_INSTALL" -eq 0 ]; then
-  info "Preparing ~/.codex on $REMOTE"
-  if [ "$DRY_RUN" -eq 1 ]; then
-    dry "ssh $REMOTE 'mkdir -p ~/.codex'"
-    dry "scp $INSTALL_SCRIPT $REMOTE:~/.codex/codex_install.sh"
-    dry "ssh $REMOTE 'sh ~/.codex/codex_install.sh'"
+  info "Checking remote Codex installation"
+  if remote_codex_installed; then
+    info "Remote Codex is already installed"
   else
-    ssh "$REMOTE" 'mkdir -p ~/.codex'
-    scp "$INSTALL_SCRIPT" "$REMOTE:~/.codex/codex_install.sh"
-    ssh "$REMOTE" 'sh ~/.codex/codex_install.sh'
+    info "Preparing ~/.codex on $REMOTE"
+    if [ "$DRY_RUN" -eq 1 ]; then
+      dry "ssh $REMOTE 'mkdir -p ~/.codex'"
+      dry "scp $INSTALL_SCRIPT $REMOTE:~/.codex/codex_install.sh"
+      dry "ssh $REMOTE 'sh ~/.codex/codex_install.sh'"
+    else
+      ssh "$REMOTE" 'mkdir -p ~/.codex'
+      scp "$INSTALL_SCRIPT" "$REMOTE:~/.codex/codex_install.sh"
+      ssh "$REMOTE" 'sh ~/.codex/codex_install.sh'
+    fi
   fi
 else
   info "Skipping remote install"
 fi
 
 if [ "$SKIP_TUNNEL" -eq 0 ]; then
-  info "Starting reverse SSH tunnel"
-  if [ "$DRY_RUN" -eq 1 ]; then
-    dry "ssh -fN -R $REMOTE_BIND:$LOCAL_PROXY $REMOTE"
+  info "Checking reverse SSH tunnel"
+  if tunnel_running; then
+    info "Reverse SSH tunnel is already running"
   else
-    ssh -fN -R "$REMOTE_BIND:$LOCAL_PROXY" "$REMOTE"
+    info "Starting reverse SSH tunnel"
+    if [ "$DRY_RUN" -eq 1 ]; then
+      dry "ssh -fN -R $REMOTE_BIND:$LOCAL_PROXY $REMOTE"
+    else
+      ssh -fN -R "$REMOTE_BIND:$LOCAL_PROXY" "$REMOTE"
+    fi
   fi
 else
   info "Skipping reverse SSH tunnel"
 fi
 
 if [ "$SKIP_LOGIN" -eq 0 ]; then
-  info "Starting remote Codex device login"
-  if [ "$DRY_RUN" -eq 1 ]; then
-    dry "ssh -t $REMOTE 'PATH=\"\$HOME/.codex/bin:\$PATH\" codex login --device-auth'"
+  info "Checking remote Codex authentication"
+  if remote_codex_authenticated; then
+    info "Remote Codex authentication is already configured"
   else
-    ssh -t "$REMOTE" 'PATH="$HOME/.codex/bin:$PATH" codex login --device-auth'
+    info "Starting remote Codex device login"
+    if [ "$DRY_RUN" -eq 1 ]; then
+      dry "ssh -t $REMOTE 'PATH=\"\$HOME/.codex/bin:\$PATH\" codex login --device-auth'"
+    else
+      ssh -t "$REMOTE" 'PATH="$HOME/.codex/bin:$PATH" codex login --device-auth'
+    fi
   fi
 else
   info "Skipping remote Codex login"

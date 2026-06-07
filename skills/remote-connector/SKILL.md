@@ -9,6 +9,7 @@ description: Use when the user invokes @Remote Connector or /Remote-Connector, m
 
 - If the user invokes `@Remote Connector` or `/Remote-Connector` with no SSH alias or no other instructions, show the usage text below and do not run commands.
 - If the user supplies an SSH alias, run the bundled bash script against that alias.
+- Re-running the script for the same alias is intentional: it checks the remote Codex binary, the reverse SSH tunnel, and the remote auth file, then repairs missing pieces instead of blindly duplicating work.
 - The optional positional ports are `REMOTE_FORWAR_PORT` then `LOCAL_FORWARD_PORT`; they default to `7890` and `17890`.
 - These positional defaults preserve the default tunnel as `ssh -fN -R 127.0.0.1:17890:127.0.0.1:7890 REMOTE_SSH_MACHINE`.
 - The SSH alias must match a `Host` token in the local `~/.ssh/config`.
@@ -24,13 +25,14 @@ Usage:
 
 What it does:
   1. Reads ~/.ssh/config and verifies REMOTE_SSH_MACHINE is a Host entry.
-  2. Creates ~/.codex on the remote machine.
-  3. Copies scripts/codex_install.sh to ~/.codex/codex_install.sh on the remote machine.
-  4. Runs the install script remotely.
-  5. Starts a reverse SSH tunnel:
+  2. Checks whether ~/.codex/bin/codex already exists on the remote machine.
+  3. Installs or repairs remote Codex only when it is missing.
+  4. Checks whether the matching reverse SSH tunnel is already running.
+  5. Starts or repairs the reverse SSH tunnel when needed:
      ssh -fN -R 127.0.0.1:17890:127.0.0.1:7890 REMOTE_SSH_MACHINE
-  6. Runs codex login --device-auth on the remote machine.
-  7. Prints the connection details to add in Codex desktop Connections.
+  6. Checks whether remote Codex authentication already exists.
+  7. Runs codex login --device-auth only when authentication is missing.
+  8. Prints the connection details to add in Codex desktop Connections.
 
 Options are available by running:
   scripts/codex-remote-connector.sh --help
