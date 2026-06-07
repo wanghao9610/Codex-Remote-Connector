@@ -31,7 +31,7 @@ What it does:
   5. Starts a reverse SSH tunnel:
      ssh -fN -R 127.0.0.1:17890:127.0.0.1:7890 REMOTE_SSH_MACHINE
   6. Runs codex login --device-auth on the remote machine.
-  7. Prints the connection details to add in Codex desktop Connections.
+  7. Prints the connection details to add under Codex > Settings > Connections > SSH.
 
 Options:
   REMOTE_FORWAR_PORT       Optional local proxy target port. Default: 7890.
@@ -308,6 +308,7 @@ fi
 cat <<EOF
 
 Connection details for Codex desktop:
+  Add or enable this host under Codex > Settings > Connections > SSH.
   SSH host/alias: $REMOTE
   Remote Codex binary: ~/.codex/bin/codex
   Remote Codex home: ~/.codex

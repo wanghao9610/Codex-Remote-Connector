@@ -32,7 +32,7 @@ What it does:
      ssh -fN -R 127.0.0.1:17890:127.0.0.1:7890 REMOTE_SSH_MACHINE
   6. Checks whether remote Codex authentication already exists.
   7. Runs codex login --device-auth only when authentication is missing.
-  8. Prints the connection details to add in Codex desktop Connections.
+  8. Prints the connection details to add under Codex > Settings > Connections > SSH.
 
 Options are available by running:
   scripts/codex-remote-connector.sh --help
@@ -66,4 +66,4 @@ After remote login succeeds, help the user add a connection in the Codex desktop
 - Remote Codex home: `~/.codex`
 - Reverse proxy on remote: `http://127.0.0.1:17890`
 
-If desktop UI automation is available and appropriate, use it to add the connection. Otherwise, provide the exact fields above.
+The user must add or enable the matching remote server under Codex > Settings > Connections > SSH after installation and remote login. If desktop UI automation is available and appropriate, use it to add the connection automatically. Otherwise, provide the exact fields above so the user can add it manually.

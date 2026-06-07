@@ -2,7 +2,7 @@
 
 [中文文档](README_ZH.md)
 
-Codex Remote Connector helps prepare an SSH host for use from the Codex desktop app. It verifies a local SSH alias, installs the Codex CLI on the remote machine, starts a reverse proxy tunnel, runs Codex device login on the remote host, and prints the connection fields you need in Codex.
+Codex Remote Connector helps prepare an SSH host for use from the Codex desktop app. It verifies a local SSH alias, installs the Codex CLI on the remote machine, starts a reverse proxy tunnel, runs Codex device login on the remote host, and prints the connection fields you need under Codex desktop **Settings > Connections > SSH**.
 
 ## What it does
 
@@ -20,7 +20,7 @@ When you run Remote Connector against an SSH alias, it:
 
 6. Checks whether remote Codex authentication already exists.
 7. Runs `codex login --device-auth` on the remote host only when authentication is missing.
-8. Prints the Codex desktop connection details.
+8. Prints the Codex desktop **Settings > Connections > SSH** connection details.
 
 The bundled installer places the remote Codex binary at `~/.codex/bin/codex`. The wrapper sets `http_proxy`, `https_proxy`, `HTTP_PROXY`, and `HTTPS_PROXY` to `http://127.0.0.1:17890` when Codex runs on the remote host.
 
@@ -58,16 +58,20 @@ Please install the Codex plugin from https://github.com/wanghao9610/Codex-Remote
 中文：
 
 ```text
-请帮我从 https://github.com/wanghao9610/Codex-Remote-Connector 安装 Codex 插件。请把插件 clone 到 ~/plugins/remote-connector，配置 personal marketplace，运行 codex plugin add remote-connector@personal，并告诉我安装完成后如何使用 /Remote-Connector。
+请帮我从 https://github.com/wanghao9610/Codex-Remote-Connector 安装 Codex 插件。请把插件 clone 到 ~/plugins/remote-connector，配置 personal marketplace，运行 codex plugin add remote-connector@personal，并告诉我安装完成后如何使用 @Remote-Connector。
 ```
 
 Codex may ask for permission before writing outside the current workspace, for example when creating `~/plugins/remote-connector` or editing `~/.agents/plugins/marketplace.json`. Approve those actions if the paths look correct.
+
+Installing the plugin only makes `@Remote-Connector` available. You still need to prepare each remote host and add the matching SSH connection in Codex desktop.
 
 After installation, start a new Codex thread so the plugin skill is loaded. Then invoke:
 
 ```text
 @Remote-Connector devbox
 ```
+
+After the remote install, reverse tunnel, and device login complete, open **Codex > Settings > Connections > SSH** and add or enable the remote server with the fields printed by the script. You can also ask Codex to try adding it automatically from the script output; if desktop UI automation is unavailable, fill in the fields manually.
 
 ### Manual install
 
@@ -205,7 +209,7 @@ Do not clone the plugin into `~/.agents/plugins/plugins/remote-connector` or `~/
 
 5. Add the SSH connection in Codex desktop.
 
-   Open **Settings > Connections** and add or enable the SSH host with the values printed by the script:
+   Open **Codex > Settings > Connections > SSH** and manually add or enable the SSH host with the values printed by the script. Installing the plugin and running `@Remote-Connector` do not guarantee the host already exists in Connections; if Codex can operate the desktop UI, you can also ask it to add the host automatically from these fields.
 
    ```text
    SSH host/alias: devbox
