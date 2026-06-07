@@ -40,20 +40,27 @@ Remote machine:
 
 ## Install in Codex
 
-Codex discovers local plugins through a local marketplace file. The simplest setup is to make this repository available as `~/plugins/remote-connector`, add a personal marketplace entry, then install the plugin from that marketplace.
+Codex discovers local plugins through a local marketplace file. The simplest setup is to clone this repository to `~/plugins/remote-connector`, add a personal marketplace entry, then install the plugin from that marketplace.
 
-1. Put the plugin source under `~/plugins/remote-connector`.
+1. Clone the plugin from GitHub.
+
+   ```bash
+   mkdir -p ~/plugins
+   git clone https://github.com/wanghao9610/Codex-Remote-Connector.git ~/plugins/remote-connector
+   ```
+
+   If you already cloned it, update it with:
+
+   ```bash
+   cd ~/plugins/remote-connector
+   git pull
+   ```
+
+   If you are developing from a local checkout instead, symlink it into the same location:
 
    ```bash
    mkdir -p ~/plugins
    ln -s /path/to/Codex-Remote-Connector ~/plugins/remote-connector
-   ```
-
-   If you prefer copying instead of symlinking:
-
-   ```bash
-   mkdir -p ~/plugins
-   cp -R /path/to/Codex-Remote-Connector ~/plugins/remote-connector
    ```
 
 2. Add the plugin to your personal marketplace.
