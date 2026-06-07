@@ -1,5 +1,7 @@
 # Codex Remote Connector
 
+[中文文档](README_ZH.md)
+
 Codex Remote Connector helps prepare an SSH host for use from the Codex desktop app. It verifies a local SSH alias, installs the Codex CLI on the remote machine, starts a reverse proxy tunnel, runs Codex device login on the remote host, and prints the connection fields you need in Codex.
 
 ## What it does
