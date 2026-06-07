@@ -1,13 +1,13 @@
 ---
 name: remote-connector
-description: Use when the user invokes @Remote Connector or /Remote-Connector, mentions Remote Connector, asks to connect Codex to a remote SSH host, or wants to install/login Codex on a remote machine using an ssh alias from ~/.ssh/config.
+description: Use when the user invokes @Remote Connector or @Remote-Connector, mentions Remote Connector, asks to connect Codex to a remote SSH host, or wants to install/login Codex on a remote machine using an ssh alias from ~/.ssh/config.
 ---
 
 # Remote Connector
 
 ## Behavior
 
-- If the user invokes `@Remote Connector` or `/Remote-Connector` with no SSH alias or no other instructions, show the usage text below and do not run commands.
+- If the user invokes `@Remote Connector` or `@Remote-Connector` with no SSH alias or no other instructions, show the usage text below and do not run commands.
 - If the user supplies an SSH alias, run the bundled bash script against that alias.
 - Re-running the script for the same alias is intentional: it checks the remote Codex binary, the reverse SSH tunnel, and the remote auth file, then repairs missing pieces instead of blindly duplicating work.
 - The optional positional ports are `REMOTE_FORWAR_PORT` then `LOCAL_FORWARD_PORT`; they default to `7890` and `17890`.
@@ -20,7 +20,7 @@ description: Use when the user invokes @Remote Connector or /Remote-Connector, m
 
 ```text
 Usage:
-  /Remote-Connector REMOTE_SSH_MACHINE [REMOTE_FORWAR_PORT] [LOCAL_FORWARD_PORT]
+  @Remote-Connector REMOTE_SSH_MACHINE [REMOTE_FORWAR_PORT] [LOCAL_FORWARD_PORT]
   @Remote Connector REMOTE_SSH_MACHINE [REMOTE_FORWAR_PORT] [LOCAL_FORWARD_PORT]
 
 What it does:

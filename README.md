@@ -52,7 +52,7 @@ The easiest way is to ask Codex to install the plugin for you. Start a Codex thr
 English:
 
 ```text
-Please install the Codex plugin from https://github.com/wanghao9610/Codex-Remote-Connector. Clone it to ~/plugins/remote-connector, configure the personal marketplace, run codex plugin add remote-connector@personal, and tell me how to use /Remote-Connector after installation.
+Please install the Codex plugin from https://github.com/wanghao9610/Codex-Remote-Connector. Clone it to ~/plugins/remote-connector, configure the personal marketplace, run codex plugin add remote-connector@personal, and tell me how to use @Remote-Connector after installation.
 ```
 
 中文：
@@ -66,7 +66,7 @@ Codex may ask for permission before writing outside the current workspace, for e
 After installation, start a new Codex thread so the plugin skill is loaded. Then invoke:
 
 ```text
-/Remote-Connector devbox
+@Remote-Connector devbox
 ```
 
 ### Manual install
@@ -156,7 +156,7 @@ Do not clone the plugin into `~/.agents/plugins/plugins/remote-connector` or `~/
    New or refreshed plugin skills are picked up at the start of a thread. In the new thread, invoke:
 
    ```text
-   /Remote-Connector devbox
+   @Remote-Connector devbox
    ```
 
 ## Quick start
@@ -181,7 +181,7 @@ Do not clone the plugin into `~/.agents/plugins/plugins/remote-connector` or `~/
    From Codex, after installing this plugin:
 
    ```text
-   /Remote-Connector devbox
+   @Remote-Connector devbox
    @Remote Connector devbox
    ```
 
@@ -196,7 +196,7 @@ Do not clone the plugin into `~/.agents/plugins/plugins/remote-connector` or `~/
    Optional positional ports are supported:
 
    ```text
-   /Remote-Connector REMOTE_SSH_MACHINE [REMOTE_FORWAR_PORT] [LOCAL_FORWARD_PORT]
+   @Remote-Connector REMOTE_SSH_MACHINE [REMOTE_FORWAR_PORT] [LOCAL_FORWARD_PORT]
    ```
 
 4. Complete the device login.
