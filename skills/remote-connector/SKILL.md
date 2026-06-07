@@ -21,7 +21,6 @@ description: Use when the user invokes @Remote Connector or @Remote-Connector, m
 ```text
 Usage:
   @Remote-Connector REMOTE_SSH_MACHINE [REMOTE_FORWAR_PORT] [LOCAL_FORWARD_PORT]
-  @Remote Connector REMOTE_SSH_MACHINE [REMOTE_FORWAR_PORT] [LOCAL_FORWARD_PORT]
 
 What it does:
   1. Reads ~/.ssh/config and verifies REMOTE_SSH_MACHINE is a Host entry.

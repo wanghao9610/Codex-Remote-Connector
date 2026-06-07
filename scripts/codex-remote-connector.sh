@@ -20,7 +20,6 @@ usage() {
   cat <<'EOF'
 Usage:
   @Remote-Connector REMOTE_SSH_MACHINE [REMOTE_FORWAR_PORT] [LOCAL_FORWARD_PORT]
-  @Remote Connector REMOTE_SSH_MACHINE [REMOTE_FORWAR_PORT] [LOCAL_FORWARD_PORT]
   scripts/codex-remote-connector.sh [options] REMOTE_SSH_MACHINE [REMOTE_FORWAR_PORT] [LOCAL_FORWARD_PORT]
 
 What it does:

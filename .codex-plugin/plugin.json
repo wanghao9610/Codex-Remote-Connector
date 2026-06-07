@@ -25,7 +25,6 @@
     ],
     "defaultPrompt": [
       "@Remote-Connector REMOTE_SSH_MACHINE REMOTE_FORWAR_PORT LOCAL_FORWARD_PORT",
-      "@Remote Connector REMOTE_SSH_MACHINE REMOTE_FORWAR_PORT LOCAL_FORWARD_PORT",
       "Connect Codex to my SSH host dev-box"
     ],
     "brandColor": "#22D3EE",

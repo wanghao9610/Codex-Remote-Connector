@@ -186,7 +186,6 @@ Do not clone the plugin into `~/.agents/plugins/plugins/remote-connector` or `~/
 
    ```text
    @Remote-Connector devbox
-   @Remote Connector devbox
    ```
 
    Or run the script directly from this repository:
