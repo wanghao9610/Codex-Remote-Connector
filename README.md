@@ -20,7 +20,7 @@ When you run Remote Connector against an SSH alias, it:
 
 6. Checks whether remote Codex authentication already exists.
 7. Runs `codex login --device-auth` on the remote host only when authentication is missing.
-8. Prints the Codex desktop **Settings > Connections > SSH** connection details.
+8. Prints the Codex desktop **Settings > Connections > SSH** Add SSH connection fields.
 
 The bundled installer places the remote Codex binary at `~/.codex/bin/codex`. The wrapper sets `http_proxy`, `https_proxy`, `HTTP_PROXY`, and `HTTPS_PROXY` to `http://127.0.0.1:17890` when Codex runs on the remote host.
 
@@ -211,7 +211,13 @@ Do not clone the plugin into `~/.agents/plugins/plugins/remote-connector` or `~/
    Open **Codex > Settings > Connections > SSH** and manually add or enable the SSH host with the values printed by the script. Installing the plugin and running `@Remote-Connector` do not guarantee the host already exists in Connections; if Codex can operate the desktop UI, you can also ask it to add the host automatically from these fields.
 
    ```text
-   SSH host/alias: devbox
+   Display name: devbox
+   Hostname: you@devbox.example.com
+   SSH port (optional): (leave blank)
+   Auth: Identity
+   Identity file path: ~/.ssh/id_ed25519
+
+   Remote Codex details:
    Remote Codex binary: ~/.codex/bin/codex
    Remote Codex home: ~/.codex
    Reverse proxy on remote: http://127.0.0.1:17890
@@ -324,7 +330,13 @@ Keep the SSH login command open until the browser authentication finishes. Confi
 Check the connection values:
 
 ```text
-SSH host/alias: the same alias used by ssh
+Display name: the same alias used by ssh
+Hostname: user@host.com, or host.com if your SSH config has no User
+SSH port (optional): the Port value from SSH config, or leave blank
+Auth: Identity if SSH config has IdentityFile, otherwise No Auth
+Identity file path: the IdentityFile value from SSH config, or leave blank
+
+Remote Codex details:
 Remote Codex binary: ~/.codex/bin/codex
 Remote Codex home: ~/.codex
 Reverse proxy on remote: http://127.0.0.1:17890

@@ -15,7 +15,7 @@
   "interface": {
     "displayName": "Remote Connector",
     "shortDescription": "Install and log in Codex on a remote SSH host.",
-    "longDescription": "Remote Connector verifies an SSH alias, copies the bundled Codex install script to the remote machine, runs it, opens a reverse proxy tunnel, starts device authentication, and prints the Codex desktop connection details.",
+    "longDescription": "Remote Connector verifies an SSH alias, copies the bundled Codex install script to the remote machine, runs it, opens a reverse proxy tunnel, starts device authentication, and prints the Codex desktop Add SSH connection fields.",
     "developerName": "Local",
     "category": "Productivity",
     "capabilities": [

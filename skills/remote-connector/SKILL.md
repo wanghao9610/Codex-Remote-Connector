@@ -31,7 +31,7 @@ What it does:
      ssh -fN -R 127.0.0.1:17890:127.0.0.1:7890 REMOTE_SSH_MACHINE
   6. Checks whether remote Codex authentication already exists.
   7. Runs codex login --device-auth only when authentication is missing.
-  8. Prints the connection details to add under Codex > Settings > Connections > SSH.
+  8. Prints the Add SSH connection fields for Codex > Settings > Connections > SSH.
 
 Options are available by running:
   scripts/codex-remote-connector.sh --help
@@ -60,7 +60,11 @@ When the remote command prints a device-auth URL and code:
 
 After remote login succeeds, help the user add a connection in the Codex desktop app using the script output:
 
-- SSH host/alias: the supplied `REMOTE_SSH_MACHINE`
+- Display name: the supplied `REMOTE_SSH_MACHINE`
+- Hostname: `User@HostName` from `~/.ssh/config`, or `HostName` when no `User` is configured
+- SSH port: `Port` from `~/.ssh/config`, or blank when omitted
+- Auth: `Identity` when `IdentityFile` is configured, otherwise `No Auth`
+- Identity file path: `IdentityFile` from `~/.ssh/config`, or blank when omitted
 - Remote Codex binary: `~/.codex/bin/codex`
 - Remote Codex home: `~/.codex`
 - Reverse proxy on remote: `http://127.0.0.1:17890`

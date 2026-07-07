@@ -30,7 +30,7 @@ What it does:
   5. Starts a reverse SSH tunnel:
      ssh -fN -R 127.0.0.1:17890:127.0.0.1:7890 REMOTE_SSH_MACHINE
   6. Runs codex login --device-auth on the remote machine.
-  7. Prints the connection details to add under Codex > Settings > Connections > SSH.
+  7. Prints the Add SSH connection fields for Codex > Settings > Connections > SSH.
 
 Options:
   REMOTE_FORWAR_PORT       Optional local proxy target port. Default: 7890.
@@ -123,6 +123,47 @@ host_exists() {
             found = 1
           }
         }
+      }
+    }
+    END { exit(found ? 0 : 1) }
+  ' "$config"
+}
+
+ssh_config_value() {
+  alias="$1"
+  config="$2"
+  option="$3"
+
+  [ -f "$config" ] || return 1
+
+  awk -v target="$alias" -v wanted="$option" '
+    BEGIN { wanted = tolower(wanted) }
+    /^[[:space:]]*($|#)/ { next }
+    {
+      line = $0
+      sub(/^[[:space:]]+/, "", line)
+      sub(/[[:space:]]+#.*$/, "", line)
+      n = split(line, fields, /[[:space:]]+/)
+      keyword = tolower(fields[1])
+
+      if (keyword == "host") {
+        in_target = 0
+        for (i = 2; i <= n; i++) {
+          if (fields[i] == target) {
+            in_target = 1
+          }
+        }
+        next
+      }
+
+      if (in_target && keyword == wanted) {
+        value = ""
+        for (i = 2; i <= n; i++) {
+          value = value (i == 2 ? "" : " ") fields[i]
+        }
+        print value
+        found = 1
+        exit
       }
     }
     END { exit(found ? 0 : 1) }
@@ -304,11 +345,47 @@ else
   info "Skipping remote Codex login"
 fi
 
+DISPLAY_NAME="$REMOTE"
+CONFIG_HOSTNAME="$(ssh_config_value "$REMOTE" "$SSH_CONFIG" HostName || true)"
+CONFIG_USER="$(ssh_config_value "$REMOTE" "$SSH_CONFIG" User || true)"
+CONFIG_PORT="$(ssh_config_value "$REMOTE" "$SSH_CONFIG" Port || true)"
+CONFIG_IDENTITY_FILE="$(ssh_config_value "$REMOTE" "$SSH_CONFIG" IdentityFile || true)"
+
+if [ -z "$CONFIG_HOSTNAME" ]; then
+  CONFIG_HOSTNAME="$REMOTE"
+fi
+
+if [ -n "$CONFIG_USER" ]; then
+  FORM_HOSTNAME="$CONFIG_USER@$CONFIG_HOSTNAME"
+else
+  FORM_HOSTNAME="$CONFIG_HOSTNAME"
+fi
+
+if [ -n "$CONFIG_PORT" ]; then
+  FORM_PORT="$CONFIG_PORT"
+else
+  FORM_PORT="(leave blank)"
+fi
+
+if [ -n "$CONFIG_IDENTITY_FILE" ]; then
+  FORM_AUTH="Identity"
+  FORM_IDENTITY_FILE="$CONFIG_IDENTITY_FILE"
+else
+  FORM_AUTH="No Auth"
+  FORM_IDENTITY_FILE="(leave blank)"
+fi
+
 cat <<EOF
 
-Connection details for Codex desktop:
-  Add or enable this host under Codex > Settings > Connections > SSH.
-  SSH host/alias: $REMOTE
+Add SSH connection in Codex desktop:
+  Open Codex > Settings > Connections > SSH > Add SSH connection.
+  Display name: $DISPLAY_NAME
+  Hostname: $FORM_HOSTNAME
+  SSH port (optional): $FORM_PORT
+  Auth: $FORM_AUTH
+  Identity file path: $FORM_IDENTITY_FILE
+
+Remote Codex details:
   Remote Codex binary: ~/.codex/bin/codex
   Remote Codex home: ~/.codex
   Reverse proxy on remote: http://$REMOTE_BIND
