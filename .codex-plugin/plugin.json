@@ -1,7 +1,7 @@
 {
   "name": "remote-connector",
-  "version": "0.1.0+codex.20260607125929",
-  "description": "Prepare a remote SSH host for Codex desktop connections.",
+  "version": "0.1.1+codex.20260714",
+  "description": "Explicitly invoked remote SSH setup for Codex desktop connections.",
   "author": {
     "name": "Local"
   },
@@ -14,8 +14,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Remote Connector",
-    "shortDescription": "Install and log in Codex on a remote SSH host.",
-    "longDescription": "Remote Connector verifies an SSH alias, copies the bundled Codex install script to the remote machine, runs it, opens a reverse proxy tunnel, starts device authentication, and prints the Codex desktop Add SSH connection fields.",
+    "shortDescription": "Explicitly invoke remote Codex SSH setup and login.",
+    "longDescription": "Remote Connector runs only when the user explicitly invokes or requests it by name. It verifies an SSH alias, copies the bundled Codex install script to the remote machine, runs it, opens a reverse proxy tunnel, starts device authentication, and prints the Codex desktop Add SSH connection fields.",
     "developerName": "Local",
     "category": "Productivity",
     "capabilities": [
@@ -25,7 +25,7 @@
     ],
     "defaultPrompt": [
       "@Remote-Connector REMOTE_SSH_MACHINE REMOTE_FORWAR_PORT LOCAL_FORWARD_PORT",
-      "Connect Codex to my SSH host dev-box"
+      "Use Remote Connector to connect Codex to my SSH host dev-box"
     ],
     "brandColor": "#22D3EE",
     "composerIcon": "./assets/icon.png",
