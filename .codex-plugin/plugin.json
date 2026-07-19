@@ -1,6 +1,6 @@
 {
   "name": "remote-connector",
-  "version": "0.1.1+codex.20260714",
+  "version": "0.2.0+codex.20260719",
   "description": "Explicitly invoked remote SSH setup for Codex desktop connections.",
   "author": {
     "name": "Local"
@@ -15,7 +15,7 @@
   "interface": {
     "displayName": "Remote Connector",
     "shortDescription": "Explicitly invoke remote Codex SSH setup and login.",
-    "longDescription": "Remote Connector runs only when the user explicitly invokes or requests it by name. It verifies an SSH alias, copies the bundled Codex install script to the remote machine, runs it, opens a reverse proxy tunnel, starts device authentication, and prints the Codex desktop Add SSH connection fields.",
+    "longDescription": "Remote Connector runs only when the user explicitly invokes or requests it by name. It verifies an SSH alias, matches the remote Codex CLI to the current desktop version, repairs proxy configuration, opens a reverse proxy tunnel, starts device authentication, and prints the Codex desktop Add SSH connection fields.",
     "developerName": "Local",
     "category": "Productivity",
     "capabilities": [

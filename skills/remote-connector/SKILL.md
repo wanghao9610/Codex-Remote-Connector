@@ -27,7 +27,8 @@ Examples that do not activate this skill:
 
 - If the user passes the invocation gate but supplies no SSH alias or no other instructions, show the usage text below and do not run commands.
 - If the user supplies an SSH alias, run the bundled bash script against that alias.
-- Re-running the script for the same alias is intentional: it checks the remote Codex binary, the reverse SSH tunnel, and the remote auth file, then repairs missing pieces instead of blindly duplicating work.
+- Re-running the script for the same alias is intentional: it compares the current desktop Codex version with the remote binary, verifies the proxy wrapper, checks the reverse SSH tunnel and remote auth file, then repairs mismatched or missing pieces.
+- Use the Codex binary selected automatically from the current desktop process. Pass `--local-codex PATH` only when the user explicitly needs a different local version source.
 - The optional positional ports are `REMOTE_FORWAR_PORT` then `LOCAL_FORWARD_PORT`; they default to `7890` and `17890`.
 - These positional defaults preserve the default tunnel as `ssh -fN -R 127.0.0.1:17890:127.0.0.1:7890 REMOTE_SSH_MACHINE`.
 - The SSH alias must match a `Host` token in the local `~/.ssh/config`.
@@ -42,14 +43,15 @@ Usage:
 
 What it does:
   1. Reads ~/.ssh/config and verifies REMOTE_SSH_MACHINE is a Host entry.
-  2. Checks whether ~/.codex/bin/codex already exists on the remote machine.
-  3. Installs or repairs remote Codex only when it is missing.
-  4. Checks whether the matching reverse SSH tunnel is already running.
-  5. Starts or repairs the reverse SSH tunnel when needed:
+  2. Detects the exact Codex CLI version used by the current desktop app.
+  3. Compares it with ~/.codex/bin/codex on the remote machine.
+  4. Installs the matching version and repairs its proxy wrapper when needed.
+  5. Checks whether the matching reverse SSH tunnel is already running.
+  6. Starts or repairs the reverse SSH tunnel when needed:
      ssh -fN -R 127.0.0.1:17890:127.0.0.1:7890 REMOTE_SSH_MACHINE
-  6. Checks whether remote Codex authentication already exists.
-  7. Runs codex login --device-auth only when authentication is missing.
-  8. Prints the Add SSH connection fields for Codex > Settings > Connections > SSH.
+  7. Checks whether remote Codex authentication already exists.
+  8. Runs codex login --device-auth only when authentication is missing.
+  9. Prints the Add SSH connection fields for Codex > Settings > Connections > SSH.
 
 Options are available by running:
   scripts/codex-remote-connector.sh --help

@@ -15,22 +15,25 @@ For example, `@Remote-Connector devbox` and `Use Remote Connector to prepare dev
 When you run Remote Connector against an SSH alias, it:
 
 1. Reads `~/.ssh/config` and verifies the alias is a concrete `Host` entry.
-2. Checks whether `~/.codex/bin/codex` is already installed on the remote host.
-3. Installs or repairs the remote Codex CLI only when it is missing.
-4. Checks whether the matching reverse SSH tunnel is already running locally.
-5. Starts or repairs the reverse SSH tunnel from the remote host to your local proxy only when needed:
+2. Detects the exact Codex CLI version used by the current desktop app.
+3. Reads the version of `~/.codex/bin/codex` on the remote host and compares it with the local version.
+4. Installs the matching remote version when Codex is missing or different, and repairs the proxy wrapper when its configuration is stale.
+5. Checks whether the matching reverse SSH tunnel is already running locally.
+6. Starts or repairs the reverse SSH tunnel from the remote host to your local proxy only when needed:
 
    ```bash
    ssh -fN -R 127.0.0.1:17890:127.0.0.1:7890 REMOTE_SSH_MACHINE
    ```
 
-6. Checks whether remote Codex authentication already exists.
-7. Runs `codex login --device-auth` on the remote host only when authentication is missing.
-8. Prints the Codex desktop **Settings > Connections > SSH** Add SSH connection fields.
+7. Checks whether remote Codex authentication already exists.
+8. Runs `codex login --device-auth` on the remote host only when authentication is missing.
+9. Prints the Codex desktop **Settings > Connections > SSH** Add SSH connection fields.
 
-The bundled installer places the remote Codex binary at `~/.codex/bin/codex`. The wrapper sets `http_proxy`, `https_proxy`, `HTTP_PROXY`, and `HTTPS_PROXY` to `http://127.0.0.1:17890` when Codex runs on the remote host.
+The bundled installer places the remote Codex binary at `~/.codex/bin/codex`. The wrapper sets `http_proxy`, `https_proxy`, `HTTP_PROXY`, and `HTTPS_PROXY` to the selected remote tunnel endpoint (`http://127.0.0.1:17890` by default) when Codex runs on the remote host.
 
-You can safely run the same command again for the same host. Repeated calls act as a health check and repair pass: the script skips pieces that are already healthy and re-runs only missing installation, tunnel, or login steps.
+You can safely run the same command again for the same host. Repeated calls act as a health check and repair pass: a remote version mismatch triggers installation of the exact local desktop version, stale proxy settings are rewritten, and already healthy installation, tunnel, and login steps are skipped.
+
+When invoked from Codex desktop, the script finds the ancestor app-server binary so a different `codex` executable earlier on `PATH` does not become the version source. For direct terminal use, it checks known Codex/ChatGPT app bundle locations and then `PATH`. Use `--local-codex PATH` or `CODEX_LOCAL_BINARY=PATH` to select an explicit binary when needed.
 
 ## Requirements
 
@@ -200,7 +203,7 @@ Do not clone the plugin into `~/.agents/plugins/plugins/remote-connector` or `~/
    scripts/codex-remote-connector.sh devbox
    ```
 
-   Running the same command again checks the remote install, reverse tunnel, and login state, then repairs missing pieces automatically.
+   Running the same command again compares local and remote Codex versions, verifies the proxy wrapper, checks the reverse tunnel and login state, and repairs mismatched or missing pieces automatically.
 
    Optional positional ports are supported:
 
@@ -245,6 +248,7 @@ Options:
 | --- | --- |
 | `--dry-run` | Print the SSH and SCP commands without running them. |
 | `--ssh-config PATH` | Read host entries from another SSH config file. |
+| `--local-codex PATH` | Read the target Codex version from an explicit local binary. |
 | `--install-script PATH` | Copy a different install script instead of `./scripts/codex_install.sh`. |
 | `--remote-bind HOST:PORT` | Remote bind address for the reverse tunnel. Default: `127.0.0.1:17890`. |
 | `--local-proxy HOST:PORT` | Local proxy forwarded by the tunnel. Default: `127.0.0.1:7890`. |
@@ -286,6 +290,7 @@ The installer supports these environment variables when you run it manually:
 | Variable | Description |
 | --- | --- |
 | `CODEX_RELEASE` | Codex version to install. Defaults to `latest`. |
+| `CODEX_PROXY_URL` | Proxy URL written to the remote Codex wrapper. Defaults to `http://127.0.0.1:17890`. |
 | `CODEX_NON_INTERACTIVE` | Set to `1`, `true`, or `yes` to skip prompts. |
 | `CODEX_HOME` | Codex home directory. Defaults to `~/.codex`. |
 | `CODEX_INSTALL_DIR` | Directory for the visible `codex` command. Defaults to `$CODEX_HOME/bin`. |
@@ -366,6 +371,13 @@ Check shell syntax:
 
 ```bash
 bash -n scripts/codex-remote-connector.sh
+sh -n scripts/codex_install.sh
+```
+
+Run the simulated remote-version and repair tests:
+
+```bash
+tests/test-remote-connector.sh
 ```
 
 Check the plugin manifest is valid JSON:

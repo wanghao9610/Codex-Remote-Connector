@@ -4,6 +4,7 @@ set -eu
 
 RELEASE="${CODEX_RELEASE:-latest}"
 NON_INTERACTIVE="${CODEX_NON_INTERACTIVE:-false}"
+PROXY_URL="${CODEX_PROXY_URL:-http://127.0.0.1:17890}"
 
 CODEX_HOME_DIR="${CODEX_HOME:-$HOME/.codex}"
 BIN_DIR="${CODEX_INSTALL_DIR:-$CODEX_HOME_DIR/bin}"
@@ -18,7 +19,6 @@ LOCK_STALE_AFTER_SECS=600
 path_action="already"
 path_profile=""
 conflict_manager=""
-conflict_path=""
 lock_kind=""
 tmp_dir=""
 
@@ -54,8 +54,23 @@ validate_version() {
     return
   fi
 
-  if ! printf '%s\n' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-(alpha|beta)(\.[0-9]+)?)?$'; then
-    echo "Invalid Codex release version: $version. Expected latest or x.y.z[-alpha[.N]|-beta[.N]]." >&2
+  if ! printf '%s\n' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?$'; then
+    echo "Invalid Codex release version: $version. Expected latest, x.y.z, or x.y.z-PRERELEASE." >&2
+    exit 1
+  fi
+}
+
+validate_proxy_url() {
+  proxy_url="$1"
+
+  if ! printf '%s\n' "$proxy_url" | grep -Eq '^https?://([A-Za-z0-9._-]+|\[[0-9A-Fa-f:]+\]):[0-9]+$'; then
+    echo "Invalid Codex proxy URL: $proxy_url. Expected http(s)://HOST:PORT." >&2
+    exit 1
+  fi
+
+  proxy_port="${proxy_url##*:}"
+  if [ "$proxy_port" -lt 1 ] || [ "$proxy_port" -gt 65535 ]; then
+    echo "Invalid Codex proxy URL port: $proxy_port. Expected 1 to 65535." >&2
     exit 1
   fi
 }
@@ -71,12 +86,21 @@ parse_args() {
         RELEASE="$2"
         shift
         ;;
+      --proxy-url)
+        if [ "$#" -lt 2 ]; then
+          echo "--proxy-url requires a value." >&2
+          exit 1
+        fi
+        PROXY_URL="$2"
+        shift
+        ;;
       --help | -h)
         cat <<EOF
-Usage: install.sh [--release VERSION]
+Usage: install.sh [--release VERSION] [--proxy-url URL]
 
 Environment:
   CODEX_RELEASE          Version to install; overridden by --release.
+  CODEX_PROXY_URL        Proxy URL written to the Codex wrapper; overridden by --proxy-url.
   CODEX_NON_INTERACTIVE  Set to 1, true, or yes to skip prompts.
 EOF
         exit 0
@@ -636,7 +660,6 @@ detect_conflicting_install() {
   fi
 
   conflict_manager="$manager"
-  conflict_path="$existing_path"
   step "Detected existing $manager-managed Codex at $existing_path"
   warn "Multiple managed Codex installs can be ambiguous because PATH order decides which one runs."
 }
@@ -776,10 +799,10 @@ update_visible_command() {
 
   cat >"$tmp_wrapper" <<EOF
 #!/usr/bin/env bash
-export http_proxy=http://127.0.0.1:17890
-export https_proxy=http://127.0.0.1:17890
-export HTTP_PROXY=http://127.0.0.1:17890
-export HTTPS_PROXY=http://127.0.0.1:17890
+export http_proxy="$PROXY_URL"
+export https_proxy="$PROXY_URL"
+export HTTP_PROXY="$PROXY_URL"
+export HTTPS_PROXY="$PROXY_URL"
 
 exec "$codex_target" "\$@"
 EOF
@@ -792,6 +815,7 @@ verify_visible_command() {
 }
 
 parse_args "$@"
+validate_proxy_url "$PROXY_URL"
 
 require_command mktemp
 require_command tar
